@@ -1,118 +1,96 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+import React, { Component } from 'react';  
+import {StyleSheet, AppRegistry,Text, View,Animated,Easing} from 'react-native';  
+ 
+export default class DisplayAnImage extends Component {  
+    constructor () {  
+        super()  
+        this.animatedValue = new Animated.Value(0)  
+    }  
+    componentDidMount () {  
+        this.animate()  
+    }//animate method is call from componentDidMount  
+    animate () {  
+        this.animatedValue.setValue(0)  
+        Animated.timing(  
+            this.animatedValue,  
+            {  
+                toValue: 1,  
+                duration: 2000,  
+                easing: Easing.linear
+            }  
+        ).start(() => this.animate())  
+    }  
+ 
+    render() {  
+        const marginLeft = this.animatedValue.interpolate({  
+            inputRange: [0, 1],  
+            outputRange: [0, 300]  
+        })  
+        const opacity = this.animatedValue.interpolate({  
+            inputRange: [0, 0.5, 1],  
+            outputRange: [0, 1, 0]  
+        })  
+        const movingMargin = this.animatedValue.interpolate({  
+            inputRange: [0, 0.5, 1],  
+            outputRange: [0, 300, 0]  
+        })  
+        const textSize = this.animatedValue.interpolate({  
+            inputRange: [0, 0.5, 1],  
+            outputRange: [18, 32, 18]  
+        })  
+        const rotateX = this.animatedValue.interpolate({  
+            inputRange: [0, 0.5, 1],  
+            outputRange: ['0deg', '180deg', '0deg']  
+        })  
+ 
+ 
+        return (  
+            <View style={styles.container}>
+                <Animated.View //returns Animated.View  
+                    style={{  
+                        marginLeft,  
+                        height: 30,  
+                        width: 40,  
+                        backgroundColor: 'red'}} />
+                <Animated.View
+                    style={{  
+                        opacity,  
+                        marginTop: 10,  
+                        height: 30,  
+                        width: 40,  
+                        backgroundColor: 'blue'}} />
+                <Animated.View
+                    style={{  
+                        marginLeft: movingMargin,  
+                        marginTop: 10,  
+                        height: 30,  
+                        width: 40,  
+                        backgroundColor: 'orange'}} />
+                <Animated.Text // returns Animated.Text  
+                    style={{  
+                        fontSize: textSize,  
+                        marginTop: 10,  
+                        color: 'green'}} >
+                    Animated Text!  
+                </Animated.Text>
+                <Animated.View
+                    style={{  
+                        transform: [{rotateX}],  
+                        marginTop: 50,  
+                        height: 30,  
+                        width: 40,  
+                        backgroundColor: 'black'}}>
+                    <Text style={{color: 'white'}}>Hello from TransformX</Text>
+                </Animated.View>
+            </View>
+        )  
+    }  
+}  
+const styles = StyleSheet.create({  
+    container: {  
+        flex: 1,  
+        paddingTop: 150
+    }  
+})  
+// skip this line if you are using Create React Native App  
+AppRegistry.registerComponent('DisplayAnImage', () => DisplayAnImage); 
